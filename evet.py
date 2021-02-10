@@ -1,1 +1,1 @@
-print('ardaardaarda')
+print('s')
