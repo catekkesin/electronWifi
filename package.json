@@ -18,5 +18,8 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^11.2.3"
+  },
+  "dependencies": {
+    "node-wifi": "^2.0.14"
   }
 }
