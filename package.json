@@ -20,6 +20,7 @@
     "electron": "^11.2.3"
   },
   "dependencies": {
+    "bootstrap4": "0.0.1-security",
     "jquery": "^3.5.1",
     "node-wifi": "^2.0.14"
   }
