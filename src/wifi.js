@@ -1,87 +1,144 @@
-var wifi = require('node-wifi');
+var wifi = require("node-wifi");
 // Initialize wifi module
 // Absolutely necessary even to set interface to null
 var jQuery = function (selector, context) {
-
   // The jQuery object is actually just the init constructor 'enhanced'
   // Need init if jQuery is called (just allow error to be thrown if not included)
   return new jQuery.fn.init(selector, context);
 };
 
 let allNetworks = [];
-let selectedSsid = '';
-let selectedPassword = '';
+let selectedSsid = "";
+let selectedPassword = "";
 
-
+//duplicateleri goster
 
 // Scan networks
 wifi.init({
-  iface: null // network interface, choose a random wifi interface if set to null
+  iface: null, // network interface, choose a random wifi interface if set to null
 });
 
-setInterval(() => {
-  wifi.scan((error, networks) => {
+const calcSignal = (signal) => {
+  let str = [
+    `<li class="very-weak">
+        <div></div>
+      </li>`,
+    `      <li class="very-weak">
+        <div></div>
+      </li>
+      <li class="weak">
+        <div></div>
+      </li>`,
+    `     <li class="very-weak">
+        <div></div>
+      </li>
+      <li class="weak">
+        <div></div>
+      </li>
+      <li class="strong">
+        <div></div>
+      </li>`,
+    ` <li class="very-weak">
+        <div></div>
+      </li>
+      <li class="weak">
+        <div></div>
+      </li>
+      <li class="strong">
+        <div></div>
+      </li>
+      <li class="pretty-strong">
+        <div></div>
+      </li>`,
+  ];
+  console.log();
+  return (
+    "<ul id='signal-strength'>" + str[Math.round(signal / 25 - 1)] + "</ul>"
+  );
+};
 
+let currentWifi;
+
+setInterval(() => {
+  wifi.getCurrentConnections((error, currentConnections) => {
+    if (error) {
+      //console.log(error);
+    } else {
+      currentWifi = currentConnections;
+    }
+  });
+
+  wifi.scan((error, networks) => {
     if (error) {
       console.log(error);
     } else {
       allNetworks = networks;
       let rows = [];
 
-      $('#tbody').empty();
-      $('#tbody').off('click');
+      $("#tbody").empty();
+      $("#tbody").off("click");
 
-      allNetworks.map(network => {
-        let row = `<tr><td>${network.mac}</td><td>${network.ssid}</td><td>${network.quality}</td><td>${network.signal_level}</td><td><button name="rowSelect"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" class='btn btn-primary'>Action</button></td></tr>`;
+      allNetworks.map((network) => {
+        let rowStyle = "";
+
+        if (network.ssid == currentWifi[0].ssid) {
+          rowStyle = "border-style: solid; border-color: green";
+        }
+
+        let row = `<tr style='${rowStyle}'><td>${
+          network.ssid
+        }</td><td>${calcSignal(network.quality)}</td>
+        <td><button name="rowSelect"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" class='btn btn-primary'>Baglan</button></td>
+        </tr>`;
         $("#tbody").append(row);
         rows.push(row);
-      })
+      });
 
       $("button[name=rowSelect]").on("click", function () {
-        selectedRow = $(this).closest('tr').children();
+        selectedRow = $(this).closest("tr").children();
 
-        console.log(selectedRow.eq(1).html());
+        //console.log(selectedRow.eq(0).html());
 
-        $("input[name=ssid]").val(selectedRow.eq(1).html());
+        $("input[name=ssid]").val(selectedRow.eq(0).html());
 
-        selectedSsid = selectedRow.eq(1).html();
-
+        selectedSsid = selectedRow.eq(0).html();
+        $("#modalTitle").text(selectedSsid);
       });
     }
   });
-
-
-
 }, 5000);
 
-$('#submit-button').on('click', function () {
-  selectedPassword = $('input[name=password]').val();
+$("#submit-button").on("click", function () {
+  selectedPassword = $("input[name=password]").val();
   console.log(selectedPassword);
+  $("#modalTitle").text("Baglaniyor...");
 
-  wifi.connect({
-    ssid: selectedSsid,
-    password: selectedPassword
-  }, error => {
-    if (error) {
-      console.log(error);
+  wifi.connect(
+    {
+      ssid: selectedSsid,
+      password: selectedPassword,
+    },
+    (error) => {
+      if (error) {
+        $("#modalTitle").text("HATA...");
+
+        console.log(error);
+      }
+      $("#modalTitle").text("Baglandi...");
+      console.log("Connected");
     }
-    console.log('Connected');
-  });
+  );
 });
 
-
-$('button[name=disconnectButton]').on('click', function () {
-  wifi.disconnect(error => {
+$("button[name=disconnectButton]").on("click", function () {
+  wifi.disconnect((error) => {
     if (error) {
       console.log(error);
     } else {
-      console.log('Disconnected');
+      console.log("Disconnected");
     }
   });
-})
-
-
-
+});
 
 /*
     networks = [

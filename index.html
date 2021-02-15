@@ -33,12 +33,13 @@
     if (window.module) module = window.module;
   </script>
 
+  <link rel="stylesheet" href="style.css">
+
 
   <title>electronWifi!</title>
 </head>
 
 <!-- SA -->
-
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -46,7 +47,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <h5 class="modal-title" id="modalTitle"></h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -68,17 +69,12 @@
 <!-- sa -->
 
 <body>
-  <table id="example" style="width:100%">
+
+  <table style="width:50%">
     <thead>
       <tr>
         <td>
-          MAC
-        </td>
-        <td>
           SSID
-        </td>
-        <td>
-          QUALITY
         </td>
         <td>
           SIGNAL
@@ -94,14 +90,8 @@
   </table>
   <button class='btn btn-secondary' name='disconnectButton'>Disconnect</button>
 </body>
-<script>
-  $(document).ready(function () {
-    $('#example').DataTable({
-      "pageLength": 10
-    });
-  });
-</script>
 <script src="./renderer.js"></script>
+
 
 <script src="src/wifi.js"></script>
 
